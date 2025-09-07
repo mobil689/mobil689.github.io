@@ -195,30 +195,44 @@
 <div class="cursor-outline"></div>
 <div id="tsparticles"></div>
 
+<!-- START: Replace your entire <header> with this block -->
 <header class="fixed top-0 left-0 w-full z-50 transition-all duration-300 content-layer">
-    <div class="glass-card mx-auto mt-4 max-w-7xl rounded-full p-2"><div class="container mx-auto px-4 flex justify-between items-center">
-        <div class="flex items-center gap-x-3">
-    <!-- This is the direct link to your logo on GitHub -->
-            <img src="https://raw.githubusercontent.com/mobil689/mobil689.github.io/main/logos/algorythmslogo.jpg" alt="Algorythms Logo" class="h-10 w-10 rounded-full">
-            <h1 class="text-xl md:text-2xl font-bold dark:text-white tracking-wider"><a href="#" class="magnetic-link">ALGORYTHMS</a></h1>
+    <div class="glass-card mx-auto mt-4 max-w-7xl rounded-full p-2">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+
+            <!-- ITEM 1: Left Side -->
+            <div class="flex items-center gap-x-3">
+                <!-- Added object-cover to prevent the logo from stretching -->
+                <img src="https://raw.githubusercontent.com/mobil689/mobil689.github.io/main/logos/algorythmslogo.jpg" alt="Algorythms Logo" class="h-10 w-10 rounded-full object-cover">
+                <h1 class="text-xl md:text-2xl font-bold dark:text-white tracking-wider"><a href="#" class="magnetic-link">ALGORYTHMS</a></h1>
+            </div>
+
+            <!-- ITEM 2: Right Side (Grouped) -->
+            <div class="flex items-center gap-x-8">
+                <nav class="hidden md:flex space-x-8 text-sm">
+                    <a href="#about" class="magnetic-link dark:text-gray-300 hover:text-black dark:hover:text-white">About</a>
+                    <a href="#departments" class="magnetic-link dark:text-gray-300 hover:text-black dark:hover:text-white">Departments</a>
+                    <a href="#events" class="magnetic-link dark:text-gray-300 hover:text-black dark:hover:text-white">Events</a>
+                    <a href="#gallery" class="magnetic-link dark:text-gray-300 hover:text-black dark:hover:text-white">Gallery</a>
+                    <a href="#team" class="magnetic-link dark:text-gray-300 hover:text-black dark:hover:text-white">Team</a>
+                    <a href="#contact" class="magnetic-link dark:text-gray-300 hover:text-black dark:hover:text-white">Contact</a>
+                </nav>
+                <div class="flex items-center space-x-4">
+                    <button id="theme-toggle" class="magnetic-link p-2 rounded-full glass-card">
+                        <svg id="theme-icon-light" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                        <svg id="theme-icon-dark" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 10.607a1 1 0 011.414 0l.707-.707a1 1 0 111.414 1.414l-.707.707a1 1 0 01-1.414 0zM3 11a1 1 0 100 2h1a1 1 0 100-2H3z"></path></svg>
+                    </button>
+                    <a href="#contact" class="magnetic-link bg-violet-600 text-white px-5 py-2 rounded-full font-semibold hidden md:block">Join Us</a>
+                    <img src="https://raw.githubusercontent.com/mobil689/mobil689.github.io/main/logos/maimslogo.png" alt="MAIMS Logo" class="h-10 hidden md:block">
+                </div>
+            </div>
+
         </div>
-        <nav class="hidden md:flex space-x-8 text-sm">
-            <a href="#about" class="magnetic-link dark:text-gray-300 hover:text-black dark:hover:text-white">About</a>
-            <a href="#departments" class="magnetic-link dark:text-gray-300 hover:text-black dark:hover:text-white">Departments</a>
-            <a href="#events" class="magnetic-link dark:text-gray-300 hover:text-black dark:hover:text-white">Events</a>
-            <a href="#gallery" class="magnetic-link dark:text-gray-300 hover:text-black dark:hover:text-white">Gallery</a>
-            <a href="#team" class="magnetic-link dark:text-gray-300 hover:text-black dark:hover:text-white">Team</a>
-            <a href="#contact" class="magnetic-link dark:text-gray-300 hover:text-black dark:hover:text-white">Contact</a>
-        </nav>
-        <div class="flex items-center space-x-4">
-            <button id="theme-toggle" class="magnetic-link p-2 rounded-full glass-card"><svg id="theme-icon-light" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg><svg id="theme-icon-dark" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 10.607a1 1 0 011.414 0l.707-.707a1 1 0 111.414 1.414l-.707.707a1 1 0 01-1.414 0zM3 11a1 1 0 100 2h1a1 1 0 100-2H3z"></path></svg></button>
-            <a href="#contact" class="magnetic-link bg-violet-600 text-white px-5 py-2 rounded-full font-semibold hidden md:block">Join Us</a>
-    
-    <!-- This is the direct link to your MAIMS logo on GitHub -->
-            <img src="https://raw.githubusercontent.com/mobil689/mobil689.github.io/main/logos/maimslogo.png" alt="MAIMS Logo" class="h-10 hidden md:block">
-        </div>
-    </div></div>
+    </div>
 </header>
+<!-- END: Header replacement block -->
+
+
 
 <div id="interactive-canvas-container">
     <canvas id="interactive-canvas"></canvas>
@@ -940,4 +954,5 @@
 
 </body>
 </html>
+
 
