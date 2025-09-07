@@ -197,7 +197,11 @@
 
 <header class="fixed top-0 left-0 w-full z-50 transition-all duration-300 content-layer">
     <div class="glass-card mx-auto mt-4 max-w-7xl rounded-full p-2"><div class="container mx-auto px-4 flex justify-between items-center">
-        <h1 class="text-xl md:text-2xl font-bold dark:text-white tracking-wider"><a href="#" class="magnetic-link">ALGORYTHMS</a></h1>
+        <div class="flex items-center gap-x-3">
+    <!-- This is the direct link to your logo on GitHub -->
+            <img src="https://raw.githubusercontent.com/mobil689/mobil689.github.io/main/logos/algorythmslogo.jpg" alt="Algorythms Logo" class="h-10 w-10 rounded-full">
+            <h1 class="text-xl md:text-2xl font-bold dark:text-white tracking-wider"><a href="#" class="magnetic-link">ALGORYTHMS</a></h1>
+        </div>
         <nav class="hidden md:flex space-x-8 text-sm">
             <a href="#about" class="magnetic-link dark:text-gray-300 hover:text-black dark:hover:text-white">About</a>
             <a href="#departments" class="magnetic-link dark:text-gray-300 hover:text-black dark:hover:text-white">Departments</a>
@@ -209,6 +213,9 @@
         <div class="flex items-center space-x-4">
             <button id="theme-toggle" class="magnetic-link p-2 rounded-full glass-card"><svg id="theme-icon-light" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg><svg id="theme-icon-dark" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 10.607a1 1 0 011.414 0l.707-.707a1 1 0 111.414 1.414l-.707.707a1 1 0 01-1.414 0zM3 11a1 1 0 100 2h1a1 1 0 100-2H3z"></path></svg></button>
             <a href="#contact" class="magnetic-link bg-violet-600 text-white px-5 py-2 rounded-full font-semibold hidden md:block">Join Us</a>
+    
+    <!-- This is the direct link to your MAIMS logo on GitHub -->
+            <img src="https://raw.githubusercontent.com/mobil689/mobil689.github.io/main/logos/maimslogo.png" alt="MAIMS Logo" class="h-10 hidden md:block">
         </div>
     </div></div>
 </header>
@@ -221,7 +228,7 @@
     <section id="hero" class="h-screen flex flex-col items-center justify-center text-center relative px-4">
         <div class="relative z-10">
             <h2 class="hero-title text-5xl md:text-8xl font-black dark:text-white uppercase tracking-tighter mb-4"><span class="inline-block">A</span><span class="inline-block">l</span><span class="inline-block">g</span><span class="inline-block">o</span><span class="inline-block">r</span><span class="inline-block">y</span><span class="inline-block">t</span><span class="inline-block">h</span><span class="inline-block">m</span><span class="inline-block">s</span></h2>
-            <p class="hero-subtitle text-lg md:text-xl dark:text-gray-300 max-w-3xl mx-auto mb-8">A Digital Experience. Scroll to Enter.</p>
+            <p class="hero-subtitle text-lg md:text-xl dark:text-gray-300 max-w-3xl mx-auto mb-8">THE TECH FUSION SOCIETY OF MAIMS (BCA)</p>
             <a href="#about" class="hero-cta bg-violet-600 text-white px-8 py-3 rounded-full font-bold text-lg">Explore Society</a>
         </div>
     </section>
@@ -357,6 +364,19 @@
             <div class="text-center mb-16">
                 <h2 class="section-title text-4xl md:text-5xl font-bold dark:text-white">Contact Us</h2>
             </div>
+            <!-- START: Add this block for the Instagram link -->
+        <div class="text-center mb-12">
+            <a href="https://www.instagram.com/algorythms.maims" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 text-lg dark:text-gray-300 group">
+                <span>Follow us on Insta</span>
+        <!-- Arrow SVG -->
+                <svg class="w-6 h-6 transition-transform duration-300 group-hover:translate-x-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+        <!-- Instagram Logo -->
+                    <div class="p-2 rounded-full bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500">
+                        <i class="fab fa-instagram text-white text-2xl"></i>
+                    </div>
+            </a>
+    </div>
+<!-- END: Instagram link block -->
             <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-12">
                 <div class="contact-form">
                     <!-- UPDATED FORM: Added id, name attributes, and required attributes -->
@@ -920,3 +940,4 @@
 
 </body>
 </html>
+
