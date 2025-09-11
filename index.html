@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorythms Society - The Definitive Experience</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- GSAP for advanced animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <!-- tsParticles for background particles -->
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+    <!-- Three.js for 3D Globe -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Lenis for smooth scrolling -->
+    <script src="https://unpkg.com/lenis@1.0.45/dist/lenis.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <style>
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto !important; }
+        .lenis.lenis-stopped { overflow: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; overflow-x: hidden; transition: background-color 0.5s, color 0.5s; cursor: none; }
+        .dark body { background-color: #000005; color: #e0e0e0; }
+        .animated-gradient { background: linear-gradient(-45deg, #0d0221, #0c164f, #000005, #24193c); background-size: 400% 400%; animation: gradientBG 20s ease infinite; }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        #tsparticles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .glass-card { background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .dark .glass-card { background: rgba(13, 2, 33, 0.3); border: 1px solid rgba(127, 85, 224, 0.2); }
+        .dark .glass-card:hover { background: rgba(13, 2, 33, 0.5); border: 1px solid rgba(127, 85, 224, 0.4); }
+        .content-layer { position: relative; z-index: 10; }
+
+        /* Flip Card Base Styles */
+        .flip-card { perspective: 1000px; }
+        .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s; transform-style: preserve-3d; }
+        .flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 0.75rem; }
+        .flip-card-back { transform: rotateY(180deg); display: flex; flex-direction: column; align-items: center; padding: 1rem; }
+
+        /* Team Flip Card Specifics */
+        .team-flip-card { width: 160px; height: 220px; flex-shrink: 0; }
+        .team-flip-card-back {
+            background-color: #24193c;
+            color: white;
+            justify-content: flex-end; /* Push content to the bottom */
+            background-size: 90%;
+            background-position: center center;
+            background-repeat: no-repeat;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-crisp-edges;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+        .light .team-flip-card-back { background-color: #1e293b; }
+
+        /* Department Flip Card Specifics */
+        .department-flip-card { height: 200px; } /* Adjust height as needed */
+        .dark .department-flip-card-back { background-color: #1a1a2e; }
+        .light .department-flip-card-back { background-color: #e0e0e0; }
+        .department-flip-card-back img { width: 100%; height: 100%; object-fit: cover; border-radius: 0.75rem; }
+
+        .tech-lead-glow { box-shadow: 0 0 15px 4px rgba(79, 70, 229, 0.6); animation: pulse-glow-light 2s infinite alternate; }
+        .dark .tech-lead-glow { box-shadow: 0 0 15px 4px rgba(167, 139, 250, 0.6); animation: pulse-glow-dark 2s infinite alternate; }
+        @keyframes pulse-glow-dark { from { box-shadow: 0 0 15px 4px rgba(167, 139, 250, 0.5); } to { box-shadow: 0 0 25px 8px rgba(167, 139, 250, 0.8); } }
+        @keyframes pulse-glow-light { from { box-shadow: 0 0 15px 4px rgba(79, 70, 229, 0.5); } to { box-shadow: 0 0 25px 8px rgba(79, 70, 229, 0.8); } }
+
+        #preloader { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000005; z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease-out; }
+        .loader-text span { font-size: 3rem; font-weight: 900; color: white; display: inline-block; }
+        .cursor-dot, .cursor-outline { position: fixed; top: 0; left: 0; pointer-events: none; border-radius: 50%; z-index: 9998; opacity: 0; transition: transform 0.2s ease-out, opacity 0.3s ease-out; }
+        .cursor-dot { width: 8px; height: 8px; background-color: #A78BFA; }
+        .cursor-outline { width: 40px; height: 40px; border: 2px solid rgba(167, 139, 250, 0.5); }
+        .cursor-outline.hover { transform: scale(2.5); background: rgba(167, 139, 250, 0.1); border-color: transparent; }
+
+        /* Interactive Blob Canvas */
+        #interactive-canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
+        #interactive-canvas { width: 100%; height: 100%; }
+
+        /* New Journey Timeline */
+        .journey-timeline { position: relative; max-width: 1200px; margin: 0 auto; }
+        .journey-timeline::after { content: ''; position: absolute; width: 6px; background-image: linear-gradient(to bottom, #a78bfa, #4f46e5, #0d0221); top: 0; bottom: 0; left: 50%; margin-left: -3px; border-radius: 3px; }
+        .journey-container { padding: 10px 40px; position: relative; background-color: inherit; width: 50%; }
+        .journey-container.left { left: 0; }
+        .journey-container.right { left: 50%; }
+        .journey-container::after { content: ''; position: absolute; width: 25px; height: 25px; right: -13px; background-color: white; border: 4px solid #a78bfa; top: 15px; border-radius: 50%; z-index: 1; }
+        .right::after { left: -12px; }
+        .journey-content { padding: 20px 30px; position: relative; border-radius: 6px; }
+
+        /* === NEW EVENT TIMELINE STYLES === */
+        #events-container {
+            height: 600px; /* Set a fixed height for the pinning container */
+        }
+        .event-timeline-card {
+            width: 320px;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            transform: rotate(-3deg);
+            transition: transform 0.3s ease;
+        }
+        .event-timeline-card:hover {
+            transform: rotate(0deg) translateY(-10px);
+        }
+        .light .event-timeline-card {
+            background-color: white;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+        .dark .event-timeline-card {
+            background: rgba(13, 2, 33, 0.3);
+            border: 1px solid rgba(127, 85, 224, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .event-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .tag-tech { background-color: #3b82f6; color: white; }
+        .tag-design { background-color: #ec4899; color: white; }
+        .tag-business { background-color: #10b981; color: white; }
+        .tag-social { background-color: #f97316; color: white; }
+        .tag-workshop { background-color: #8b5cf6; color: white; }
+        /* === END OF NEW EVENT TIMELINE STYLES === */
+
+
+        /* New Gallery Section Styling from Perplexity */
+        .gallery-filters {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        .gallery-filter-btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(167, 139, 250, 0.5);
+            color: #a78bfa;
+            background-color: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .gallery-filter-btn:hover {
+            background-color: rgba(167, 139, 250, 0.2);
+        }
+        .gallery-filter-btn.active {
+            background-color: #a78bfa;
+            color: white;
+        }
+        .gallery-grid-new {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        .gallery-item-new {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.5rem;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .gallery-item-new img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        .gallery-item-new:hover img {
+            transform: scale(1.05);
+        }
+        .gallery-item-new .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            display: flex;
+            align-items: flex-end;
+            padding: 1rem;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .gallery-item-new:hover .overlay {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="dark:animated-gradient">
+
+<div id="preloader"><div class="loader-text"><span>A</span><span>L</span><span>G</span><span>O</span><span>R</span><span>Y</span><span>T</span><span>H</span><span>M</span><span>S</span></div></div>
+<div class="cursor-dot"></div>
+<div class="cursor-outline"></div>
+<div id="tsparticles"></div>
+
+<header class="fixed top-0 left-0 w-full z-50 transition-all duration-300 content-layer">
+    <div class="glass-card mx-auto mt-4 max-w-7xl rounded-full p-2"><div class="container mx-auto px-4 flex justify-between items-center">
+        <h1 class="text-xl md:text-2xl font-bold dark:text-white tracking-wider"><a href="#" class="magnetic-link">ALGORYTHMS</a></h1>
+        <nav class="hidden md:flex space-x-8 text-sm">
+            <a href="#about" class="magnetic-link dark:text-gray-300 hover:text-black dark:hover:text-white">About</a>
+            <a href="#departments" class="magnetic-link dark:text-gray-300 hover:text-black dark:hover:text-white">Departments</a>
+            <a href="#events" class="magnetic-link dark:text-gray-300 hover:text-black dark:hover:text-white">Events</a>
+            <a href="#gallery" class="magnetic-link dark:text-gray-300 hover:text-black dark:hover:text-white">Gallery</a>
+            <a href="#team" class="magnetic-link dark:text-gray-300 hover:text-black dark:hover:text-white">Team</a>
+            <a href="#contact" class="magnetic-link dark:text-gray-300 hover:text-black dark:hover:text-white">Contact</a>
+        </nav>
+        <div class="flex items-center space-x-4">
+            <button id="theme-toggle" class="magnetic-link p-2 rounded-full glass-card"><svg id="theme-icon-light" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg><svg id="theme-icon-dark" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 10.607a1 1 0 011.414 0l.707-.707a1 1 0 111.414 1.414l-.707.707a1 1 0 01-1.414 0zM3 11a1 1 0 100 2h1a1 1 0 100-2H3z"></path></svg></button>
+            <a href="#contact" class="magnetic-link bg-violet-600 text-white px-5 py-2 rounded-full font-semibold hidden md:block">Join Us</a>
+        </div>
+    </div></div>
+</header>
+
+<div id="interactive-canvas-container">
+    <canvas id="interactive-canvas"></canvas>
+</div>
+
+<main class="content-layer">
+    <section id="hero" class="h-screen flex flex-col items-center justify-center text-center relative px-4">
+        <div class="relative z-10">
+            <h2 class="hero-title text-5xl md:text-8xl font-black dark:text-white uppercase tracking-tighter mb-4"><span class="inline-block">A</span><span class="inline-block">l</span><span class="inline-block">g</span><span class="inline-block">o</span><span class="inline-block">r</span><span class="inline-block">y</span><span class="inline-block">t</span><span class="inline-block">h</span><span class="inline-block">m</span><span class="inline-block">s</span></h2>
+            <p class="hero-subtitle text-lg md:text-xl dark:text-gray-300 max-w-3xl mx-auto mb-8">A Digital Experience. Scroll to Enter.</p>
+            <a href="#about" class="hero-cta bg-violet-600 text-white px-8 py-3 rounded-full font-bold text-lg">Explore Society</a>
+        </div>
+    </section>
+
+    <section id="about" class="py-20 md:py-32 overflow-hidden"><div class="container mx-auto px-6"><div class="text-center mb-16"><h2 class="section-title text-4xl md:text-5xl font-bold dark:text-white">About Us</h2><p class="mt-4 max-w-2xl mx-auto dark:text-gray-400">We are more than a society; we are a launchpad for ideas, a hub for collaboration, and a community that empowers students to turn passion into projects.</p></div><div class="mt-20"><h3 class="text-3xl font-bold dark:text-white text-center mb-12">Our Journey</h3>
+        <div class="journey-timeline">
+            <div class="journey-container left">
+                <div class="journey-content glass-card">
+                    <h4 class="font-bold text-xl dark:text-white">Society Founded</h4>
+                    <p class="text-sm text-violet-500 dark:text-violet-400 mt-1">November 2024</p>
+                    <p class="mt-3 dark:text-gray-300">Algorythms born from a vision to create a dynamic tech and creative community.</p>
+                </div>
+            </div>
+            <div class="journey-container right">
+                <div class="journey-content glass-card">
+                    <h4 class="font-bold text-xl dark:text-white">First Event: Compile X</h4>
+                    <p class="text-sm text-violet-500 dark:text-violet-400 mt-1">March 2025</p>
+                    <p class="mt-3 dark:text-gray-300">Hosted our inaugural event, "Compile X", attracting over 100 enthusiastic participants.</p>
+                </div>
+            </div>
+            <div class="journey-container left">
+                <div class="journey-content glass-card">
+                    <h4 class="font-bold text-xl dark:text-white">Mentorship Program Launch</h4>
+                    <p class="text-sm text-violet-500 dark:text-violet-400 mt-1">August 2025</p>
+                    <p class="mt-3 dark:text-gray-300">Successfully paired senior members with juniors to foster skill development and collaboration.</p>
+                </div>
+            </div>
+            <div class="journey-container right">
+                <div class="journey-content glass-card">
+                    <h4 class="font-bold text-xl dark:text-white">Project Incubation</h4>
+                    <p class="text-sm text-violet-500 dark:text-violet-400 mt-1">January 2026</p>
+                    <p class="mt-3 dark:text-gray-300">Launched an initiative to fund and support innovative student-led projects.</p>
+                </div>
+            </div>
+        </div>
+    </div></div></section>
+
+    <section id="departments" class="py-20 md:py-32 dark:bg-black dark:bg-opacity-20"><div class="container mx-auto px-6"><div class="text-center mb-16"><h2 class="section-title text-4xl md:text-5xl font-bold dark:text-white">Our Departments</h2><p class="section-subtitle text-violet-500 dark:text-violet-300 mt-2 text-lg">Where diverse talents unite to create magic.</p></div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Department Card 1 -->
+            <div class="flip-card department-flip-card"><div class="flip-card-inner">
+                <div class="flip-card-front glass-card p-8 rounded-2xl flex flex-col justify-center">
+                    <h3 class="text-2xl font-bold dark:text-white mb-3">Tech Experts</h3>
+                    <p class="dark:text-gray-400">Digital architects building our projects and exploring frontiers of technology.</p>
+                </div>
+                <div class="flip-card-back department-flip-card-back"><img src="https://placehold.co/600x400/0d0221/a78bfa?text=Code" alt="Tech Department"></div>
+            </div></div>
+            <!-- Department Card 2 -->
+            <div class="flip-card department-flip-card"><div class="flip-card-inner">
+                <div class="flip-card-front glass-card p-8 rounded-2xl flex flex-col justify-center">
+                    <h3 class="text-2xl font-bold dark:text-white mb-3">Content Crafters</h3>
+                    <p class="dark:text-gray-400">The voice of Algorythms, weaving words that inform, engage, and tell our society's story.</p>
+                </div>
+                <div class="flip-card-back department-flip-card-back"><img src="https://placehold.co/600x400/24193c/e0e0e0?text=Write" alt="Content Department"></div>
+            </div></div>
+            <!-- Department Card 3 -->
+            <div class="flip-card department-flip-card"><div class="flip-card-inner">
+                <div class="flip-card-front glass-card p-8 rounded-2xl flex flex-col justify-center">
+                    <h3 class="text-2xl font-bold dark:text-white mb-3">Visual Chronicles</h3>
+                    <p class="dark:text-gray-400">Capturing moments and designing the future through stunning graphics, photos, and videos.</p>
+                </div>
+                <div class="flip-card-back department-flip-card-back"><img src="https://placehold.co/600x400/0c164f/a78bfa?text=Design" alt="Visuals Department"></div>
+            </div></div>
+            <!-- Department Card 4 -->
+            <div class="flip-card department-flip-card"><div class="flip-card-inner">
+                <div class="flip-card-front glass-card p-8 rounded-2xl flex flex-col justify-center">
+                    <h3 class="text-2xl font-bold dark:text-white mb-3">PR Fusion</h3>
+                    <p class="dark:text-gray-400">Building bridges and creating buzz. We connect with the world and forge collaborations.</p>
+                </div>
+                <div class="flip-card-back department-flip-card-back"><img src="https://placehold.co/600x400/24193c/e0e0e0?text=Connect" alt="PR Department"></div>
+            </div></div>
+            <!-- Department Card 5 -->
+            <div class="flip-card department-flip-card"><div class="flip-card-inner">
+                <div class="flip-card-front glass-card p-8 rounded-2xl flex flex-col justify-center">
+                    <h3 class="text-2xl font-bold dark:text-white mb-3">Finance Nexus</h3>
+                    <p class="dark:text-gray-400">The strategic backbone managing resources to fuel our ambitious events and projects.</p>
+                </div>
+                <div class="flip-card-back department-flip-card-back"><img src="https://placehold.co/600x400/0d0221/a78bfa?text=Finance" alt="Finance Department"></div>
+            </div></div>
+            <!-- Department Card 6 -->
+            <div class="flip-card department-flip-card"><div class="flip-card-inner">
+                <div class="flip-card-front glass-card p-8 rounded-2xl flex flex-col justify-center">
+                    <h3 class="text-2xl font-bold dark:text-white mb-3">Creative Department</h3>
+                    <p class="dark:text-gray-400">The heart of innovation. We brainstorm groundbreaking ideas and add magic to all we do.</p>
+                </div>
+                <div class="flip-card-back department-flip-card-back"><img src="https://placehold.co/600x400/0c164f/a78bfa?text=Ideas" alt="Creative Department"></div>
+            </div></div>
+        </div></div>
+    </section>
+
+    <section id="events" class="py-20 md:py-32 dark:bg-black dark:bg-opacity-20 overflow-hidden">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="section-title text-4xl md:text-5xl font-bold dark:text-white">Upcoming Events</h2>
+                <p class="section-subtitle text-violet-500 dark:text-violet-300 mt-2 text-lg">Join us on our journey through amazing events and experiences.</p>
+            </div>
+        </div>
+        <!-- This container is for pinning the animation -->
+        <div id="events-container" class="relative w-full">
+            <!-- This is the horizontally scrolling element -->
+            <div id="events-timeline" class="absolute top-0 left-0 h-full flex items-center will-change-transform">
+                <!-- Wavy Dashed Line SVG -->
+                <svg width="3200" height="400" viewBox="0 0 3200 400" class="absolute top-1/2 left-0 -translate-y-1/2 stroke-slate-300 dark:stroke-slate-700">
+                    <path d="M0 200 C200 100, 300 300, 500 200 C700 100, 800 300, 1000 200 C1200 100, 1300 300, 1500 200 C1700 100, 1800 300, 2000 200 C2200 100, 2300 300, 2500 200 C2700 100, 2800 300, 3000 200 L3200 200" fill="none" stroke-width="2" stroke-dasharray="10 10"/>
+                </svg>
+
+                <!-- Event Cards Container - This will be populated by JavaScript -->
+                <div id="event-cards-container" class="relative w-[3200px] h-full">
+                    <p class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white">Loading events...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- === END OF CORRECTED EVENTS SECTION === -->
+    <section id="gallery" class="py-20 md:py-32"><div class="container mx-auto px-6"><div class="text-center mb-16"><h2 class="section-title text-4xl md:text-5xl font-bold dark:text-white">Wonderful Moments</h2><p class="section-subtitle text-violet-500 dark:text-violet-300 mt-2 text-lg">Capturing the memories that define our community.</p></div>
+        <div class="gallery-filters" id="gallery-filters">
+            <button class="gallery-filter-btn active" data-filter="all">All</button>
+            <button class="gallery-filter-btn" data-filter="events">Events</button>
+            <button class="gallery-filter-btn" data-filter="team">Team</button>
+            <button class="gallery-filter-btn" data-filter="hackathons">Hackathons</button>
+            <button class="gallery-filter-btn" data-filter="workshops">Workshops</button>
+            <button class="gallery-filter-btn" data-filter="social">Social</button>
+        </div>
+        <div class="gallery-grid-new" id="gallery-grid-new">
+            <p class="text-center col-span-full">Loading gallery...</p>
+        </div>
+    </div></section>
+
+    <section id="team" class="py-20 md:py-32"><div class="container mx-auto px-6"><div class="text-center mb-16"><h2 class="section-title text-4xl md:text-5xl font-bold dark:text-white">Meet The Team</h2></div><div class="mb-20"><h3 class="text-3xl font-bold dark:text-white text-center mb-12">Core Team</h3><div id="core-team-grid" class="flex flex-wrap gap-8 justify-center"><p class="text-center">Loading team...</p></div></div><div><h3 class="text-3xl font-bold dark:text-white text-center mb-12">Department Heads</h3><div id="department-heads-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-16 gap-x-8"><p class="text-center col-span-full">Loading department heads...</p></div></div></div></section>
+
+    <section id="contact" class="py-20 md:py-32 dark:bg-black dark:bg-opacity-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="section-title text-4xl md:text-5xl font-bold dark:text-white">Contact Us</h2>
+            </div>
+            <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-12">
+                <div class="contact-form">
+                    <!-- UPDATED FORM: Added id, name attributes, and required attributes -->
+                    <form id="contact-form">
+                        <div class="mb-4">
+                            <label for="name" class="block mb-2 dark:text-gray-300">Name</label>
+                            <input type="text" id="name" name="name" class="w-full p-3 rounded-lg bg-gray-200 dark:bg-gray-800 border-transparent focus:ring-2 focus:ring-violet-500" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="email" class="block mb-2 dark:text-gray-300">Email</label>
+                            <input type="email" id="email" name="email" class="w-full p-3 rounded-lg bg-gray-200 dark:bg-gray-800 border-transparent focus:ring-2 focus:ring-violet-500" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="message" class="block mb-2 dark:text-gray-300">Message</label>
+                            <textarea id="message" name="message" rows="4" class="w-full p-3 rounded-lg bg-gray-200 dark:bg-gray-800 border-transparent focus:ring-2 focus:ring-violet-500" required></textarea>
+                        </div>
+                        <button type="submit" class="bg-violet-600 text-white px-6 py-3 rounded-full font-semibold w-full">Send Message</button>
+                    </form>
+                </div>
+                <div class="map-container">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3497.882454372054!2d77.1148020752796!3d28.75283937559981!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d013147e71661%3A0x8543794978643867!2sMaharaja%20Agrasen%20Institute%20of%20Technology!5e0!3m2!1sen!2sin!4v1715686159620!5m2!1sen!2sin" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="rounded-lg"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="py-8 border-t border-gray-200 dark:border-white dark:border-opacity-10 content-layer"><div class="container mx-auto px-6 text-center text-gray-500 dark:text-gray-400"><p>Crafted with ⚡ by Abhisht | Tech Expert</p></div></footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- ALL YOUR EXISTING JAVASCRIPT IS HERE ---
+        // --- JOIN US MODAL LOGIC ---
+        const joinUsModal = document.getElementById('join-us-modal');
+        const modalContent = joinUsModal.querySelector('.glass-card');
+        const openModalBtns = document.querySelectorAll('a[href="#contact"].magnetic-link'); // Selects both "Join Us" buttons
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const registrationForm = document.getElementById('registration-form');
+
+// Function to open the modal
+        const openModal = () => {
+            joinUsModal.classList.remove('hidden');
+            // Animate in
+            gsap.to(modalContent, { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' });
+        };
+
+// Function to close the modal
+        const closeModal = () => {
+            gsap.to(modalContent, { opacity: 0, y: -16, duration: 0.3, ease: 'power2.in', onComplete: () => {
+                    joinUsModal.classList.add('hidden');
+                }});
+        };
+
+// Event listeners for opening and closing
+        openModalBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // We check the text content to differentiate from the "Contact" link in the nav
+                if (btn.textContent.trim() === 'Join Us') {
+                    e.preventDefault(); // Prevent scrolling to contact section
+                    openModal();
+                }
+            });
+        });
+        closeModalBtn.addEventListener('click', closeModal);
+        joinUsModal.addEventListener('click', (e) => {
+            // Close if clicking on the background overlay
+            if (e.target === joinUsModal) {
+                closeModal();
+            }
+        });
+
+
+// Handle registration form submission
+        registrationForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitButton = registrationForm.querySelector('button[type="submit"]');
+            const formData = new FormData(registrationForm);
+            const data = Object.fromEntries(formData.entries());
+
+            submitButton.textContent = 'Submitting...';
+            submitButton.disabled = true;
+
+            try {
+                const response = await fetch('/api/handle-registration', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+
+                if (response.ok) {
+                    alert('Application submitted successfully! We will get back to you soon.');
+                    registrationForm.reset();
+                    closeModal();
+                } else {
+                    const errorResult = await response.json();
+                    alert(`Error: ${errorResult.message || 'Something went wrong.'}`);
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                alert('An unexpected error occurred. Please try again.');
+            } finally {
+                submitButton.textContent = 'Submit Application';
+                submitButton.disabled = false;
+            }
+        });
+
+        const lenis = new Lenis();
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        const preloader = document.getElementById('preloader');
+        gsap.to("#preloader .loader-text span", { duration: 1, opacity: 0, stagger: 0.1, ease: 'power2.inOut', delay: 1 });
+        gsap.to(preloader, { duration: 0.5, opacity: 0, delay: 2, onComplete: () => preloader.style.display = 'none' });
+
+        tsParticles.load("tsparticles", { fpsLimit: 60, particles: { number: { value: 80, density: { enable: true, value_area: 800 } }, color: { value: ["#a78bfa", "#4f46e5"] }, shape: { type: "circle" }, opacity: { value: 0.5, random: true }, size: { value: 3, random: { enable: true, minimumValue: 1 } }, move: { enable: true, speed: 1, direction: "none", out_mode: "out" } }, interactivity: { detect_on: "canvas", events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" }, resize: true } }, detectRetina: true });
+
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        gsap.set([cursorDot, cursorOutline], { xPercent: -50, yPercent: -50 });
+        let mouseX=0, mouseY=0, dotX=0, dotY=0, outlineX=0, outlineY=0;
+        window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+        const animateCursor = () => { dotX+=(mouseX-dotX)*0.7; dotY+=(mouseY-dotY)*0.7; outlineX+=(mouseX-outlineX)*0.15; outlineY+=(mouseY-outlineY)*0.15; gsap.to(cursorDot, {duration:0, x:dotX, y:dotY}); gsap.to(cursorOutline, {duration:0, x:outlineX, y:outlineY}); requestAnimationFrame(animateCursor); }
+        animateCursor();
+        document.addEventListener('mouseenter', () => gsap.to([cursorDot, cursorOutline], { duration: 0.3, opacity: 1 }));
+        document.addEventListener('mouseleave', () => gsap.to([cursorDot, cursorOutline], { duration: 0.3, opacity: 0 }));
+
+        document.querySelectorAll('.magnetic-link').forEach(el => {
+            el.addEventListener('mousemove', e => { const { left, top, width, height } = el.getBoundingClientRect(); gsap.to(el, { x: (e.clientX - left - width/2) * 0.4, y: (e.clientY - top - height/2) * 0.4, duration: 0.8, ease: 'elastic.out(1, 0.3)'}); });
+            el.addEventListener('mouseleave', () => { gsap.to(el, { x: 0, y: 0, duration: 0.8, ease: 'elastic.out(1, 0.3)' }); });
+        });
+        document.querySelectorAll('a, button, .flip-card, .gallery-item-new').forEach(el => { el.addEventListener('mouseover', () => cursorOutline.classList.add('hover')); el.addEventListener('mouseleave', () => cursorOutline.classList.remove('hover')); });
+
+        // --- SANITY.IO DYNAMIC CONTENT LOGIC ---
+
+// IMPORTANT: Replace 'YOUR_PROJECT_ID' with your actual Sanity.io Project ID
+        const SANITY_PROJECT_ID = 'tynbb576';
+        const SANITY_DATASET = 'production';
+
+        if (SANITY_PROJECT_ID === 'YOUR_PROJECT_ID' || !SANITY_PROJECT_ID) {
+            console.error("--- SANITY SETUP ERROR --- Please replace 'YOUR_PROJECT_ID' in your index.html file.");
+            const galleryGrid = document.getElementById('gallery-grid-new');
+            const coreTeamGrid = document.getElementById('core-team-grid');
+            const deptHeadsGrid = document.getElementById('department-heads-grid');
+            const errorMsg = '<p class="text-center col-span-full text-red-500 font-bold">Error: Sanity Project ID is not configured in index.html.</p>';
+            if (galleryGrid) galleryGrid.innerHTML = errorMsg;
+            if (coreTeamGrid) coreTeamGrid.innerHTML = errorMsg;
+            if (deptHeadsGrid) deptHeadsGrid.innerHTML = errorMsg;
+            return;
+        }
+
+        async function fetchSanityData(query) {
+            const url = `https://${SANITY_PROJECT_ID}.api.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}`;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    if (response.status === 401) console.error("Sanity Fetch Error: Unauthorized. Check CORS origins in Sanity settings.");
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const { result } = await response.json();
+                return result;
+            } catch (error) {
+                console.error("Failed to fetch Sanity data:", error);
+                return [];
+            }
+        }
+
+        async function renderGallery() {
+            const galleryGrid = document.getElementById('gallery-grid-new');
+            const query = `*[_type == "galleryImage"]{title, "imageUrl": image.asset->url, category}`;
+            const images = await fetchSanityData(query);
+
+            if (images.length > 0) {
+                galleryGrid.innerHTML = images.map(item => `
+            <div class="gallery-item-new" data-category="${item.category ? item.category.toLowerCase() : 'uncategorized'}">
+                <img src="${item.imageUrl}" alt="${item.title}">
+                <div class="overlay"><p class="text-white font-bold">${item.title}</p></div>
+            </div>
+        `).join('');
+            } else {
+                // If no images from Sanity, clear the loading message
+                galleryGrid.innerHTML = '<p class="text-center col-span-full">No gallery images found. Add some in your Sanity Studio!</p>';
+            }
+        }
+
+        async function renderTeam() {
+            const coreTeamGrid = document.getElementById('core-team-grid');
+            const deptHeadsGrid = document.getElementById('department-heads-grid');
+            const query = `*[_type == "teamMember"] | order(order asc){name, role, linkedin, instagram, "imageUrl": image.asset->url, isDepartmentHead, department, isCoreTeam, pokemonImg, order}`;
+            const members = await fetchSanityData(query);
+
+            if (members.length === 0) {
+                coreTeamGrid.innerHTML = '<p class="text-center">No team members found. Add some in your Sanity Studio!</p>';
+                deptHeadsGrid.innerHTML = '';
+                return;
+            }
+
+            const coreTeam = members.filter(m => m.isCoreTeam);
+            const departmentHeads = members.filter(m => m.isDepartmentHead);
+
+            coreTeamGrid.innerHTML = coreTeam.map(member => createDynamicFlipCard(member)).join('');
+
+            const departments = {};
+            departmentHeads.forEach(head => {
+                if (!departments[head.department]) departments[head.department] = [];
+                departments[head.department].push(head);
+            });
+
+            deptHeadsGrid.innerHTML = Object.keys(departments).map(deptName => {
+                const heads = departments[deptName];
+                return `<div class="text-center">
+                    <h4 class="text-2xl font-semibold text-violet-500 dark:text-violet-300 mb-6">${deptName}</h4>
+                    <div class="flex justify-center flex-wrap gap-6">
+                        ${heads.map(head => createDynamicFlipCard(head)).join('')}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+        // --- NEW: RENDER EVENTS FUNCTION ---
+        async function renderEvents() {
+            const container = document.getElementById('event-cards-container');
+            if (!container) return;
+
+            // 1. UPDATED QUERY: We've added 'eventLink' to fetch the new field.
+            const query = `*[_type == "event"] | order(order asc){title, date, description, location, tag, positionX, positionY, eventLink}`;
+            const events = await fetchSanityData(query);
+
+            if (events.length > 0) {
+                container.innerHTML = events.map(event => {
+                    const eventDate = new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+                    // 2. LOGIC CHECK: We check if the link exists.
+                    const isClickable = event.eventLink ? `onclick="window.open('${event.eventLink}', '_blank')"` : '';
+                    const cursorStyle = event.eventLink ? 'cursor: pointer;' : '';
+
+                    // 3. DYNAMIC HTML: We apply the attributes only if a link is present.
+                    return `
+            <div class="event-timeline-card absolute" ${isClickable} style="left: ${event.positionX}px; top: ${event.positionY}px; ${cursorStyle}">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <p class="font-semibold dark:text-slate-300">${eventDate}</p>
+                        <h3 class="text-2xl font-bold dark:text-white">${event.title}</h3>
+                    </div>
+                    <span class="event-tag tag-${event.tag}">${event.tag}</span>
+                </div>
+                <p class="dark:text-slate-400">${event.description}</p>
+                <p class="mt-4 font-bold dark:text-violet-400">${event.location || ''}</p>
+            </div>`;
+                }).join('');
+            } else {
+                container.innerHTML = '<p class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white">No upcoming events. Check back soon!</p>';
+            }
+        }
+
+
+
+
+        function createDynamicFlipCard(member) {
+            const theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+            return `<div class="flip-card team-flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front glass-card p-4 flex flex-col items-center justify-center">
+                        <img class="w-24 h-24 rounded-full mb-4 border-4 border-gray-300 dark:border-violet-500" src="${member.imageUrl || 'https://placehold.co/200x200/e0e0e0/1d1d3b?text=A'}" alt="${member.name}">
+                        <h4 class="font-bold text-lg dark:text-white text-center">${member.name}</h4>
+                        <p class="text-violet-500 dark:text-violet-300 text-center">${member.role}</p>
+                    </div>
+                    <div class="flip-card-back team-flip-card-back ${theme}" style="background-image: linear-gradient(to top, rgba(36, 25, 60, 1) 15%, rgba(36, 25, 60, 0) 40%), url('${member.pokemonImg || ''}');">
+                        <div class="flex space-x-4">
+                            <a href="${member.linkedin || '#'}" target="_blank" class="text-gray-300 hover:text-white transition-colors"><i class="fab fa-linkedin fa-lg"></i></a>
+                            <a href="${member.instagram || '#'}" target="_blank" class="text-gray-300 hover:text-white transition-colors"><i class="fab fa-instagram fa-lg"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+// --- INITIATE DATA FETCHING ---
+        renderGallery();
+        renderTeam();
+        renderEvents();
+
+        const themeToggle = document.getElementById('theme-toggle'), lightIcon = document.getElementById('theme-icon-light'), darkIcon = document.getElementById('theme-icon-dark');
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) { document.documentElement.classList.add('dark'); darkIcon.classList.remove('hidden'); } else { lightIcon.classList.remove('hidden'); }
+        themeToggle.addEventListener('click', () => { document.documentElement.classList.toggle('dark'); lightIcon.classList.toggle('hidden'); darkIcon.classList.toggle('hidden'); localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light'); });
+
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.from(".hero-title span", { y: 50, opacity: 0, duration: 1, ease: "power3.out", stagger: 0.05, delay: 2.2 });
+        gsap.from(".hero-subtitle", { y: 30, opacity: 0, duration: 1, ease: "power3.out", delay: 2.7 });
+        gsap.from(".hero-cta", { scale: 0.8, opacity: 0, duration: 1, ease: "back.out(1.7)", delay: 3 });
+
+        document.querySelectorAll('.section-title').forEach(t => gsap.from(t, { scrollTrigger: { trigger: t, start: "top 85%" }, y: 50, opacity: 0, duration: 1, ease: "power3.out" }));
+
+        const journeyItems = gsap.utils.toArray(".journey-container");
+        journeyItems.forEach(item => {
+            gsap.from(item, {
+                scrollTrigger: { trigger: item, start: "top 80%", toggleActions: "play none none none" },
+                opacity: 0,
+                x: item.classList.contains('left') ? -100 : 100,
+                duration: 0.8,
+                ease: "power3.out"
+            });
+        });
+
+        gsap.from(".department-flip-card", { scrollTrigger: { trigger: "#departments", start: "top 70%" }, scale: 0.8, opacity: 0, duration: 0.8, ease: "back.out(1.4)", stagger: 0.15 });
+
+        // === NEW GSAP ANIMATION FOR EVENT TIMELINE ===
+        const eventsTimeline = document.getElementById('events-timeline');
+        // Check if the element exists to prevent errors
+        if (eventsTimeline) {
+            // The total distance to scroll horizontally is the width of the timeline minus the window's width
+            const scrollWidth = eventsTimeline.offsetWidth - window.innerWidth;
+
+            gsap.to(eventsTimeline, {
+                x: () => -scrollWidth, // Animate the x position to the negative scroll width
+                ease: "none", // A linear animation for a direct link to scroll
+                scrollTrigger: {
+                    trigger: "#events-container", // The element that triggers the animation
+                    start: "top top", // Start when the top of the trigger hits the top of the viewport
+                    end: () => `+=${scrollWidth}`, // End the animation after scrolling vertically for the distance of scrollWidth
+                    scrub: 1, // Smoothly scrub the animation along with the scrollbar (1 second catch-up)
+                    pin: true, // Pin the trigger element while the animation is active
+                    anticipatePin: 1, // Helps prevent jumps on fast scrolls
+                    invalidateOnRefresh: true // Recalculate values on window resize
+                }
+            });
+        }
+        // === END OF NEW GSAP ANIMATION ===
+
+        gsap.from(".gallery-item-new", { scrollTrigger: { trigger: "#gallery", start: "top 80%" }, y: 50, opacity: 0, duration: 0.8, stagger: 0.1 });
+        gsap.from("#team .flip-card", { scrollTrigger: { trigger: "#team", start: "top 70%" }, scale: 0.5, opacity: 0, duration: 0.8, ease: "back.out(1.5)", stagger: 0.05 });
+
+        const filterContainer = document.querySelector('#gallery-filters');
+        const galleryItems = document.querySelectorAll('.gallery-item-new');
+
+        filterContainer.addEventListener('click', (e) => {
+            if(e.target.classList.contains('gallery-filter-btn')) {
+                filterContainer.querySelector('.active').classList.remove('active');
+                e.target.classList.add('active');
+                const filterValue = e.target.getAttribute('data-filter');
+                galleryItems.forEach(item => {
+                    if (item.dataset.category === filterValue || filterValue === 'all') {
+                        item.style.display = 'block';
+                        gsap.to(item, { opacity: 1, scale: 1, duration: 0.5 });
+                    } else {
+                        gsap.to(item, { opacity: 0, scale: 0.9, duration: 0.5, onComplete: () => {
+                                item.style.display = 'none';
+                            }});
+                    }
+                });
+            }
+        });
+
+        const canvasContainer = document.getElementById('interactive-canvas-container');
+        const canvas = document.getElementById('interactive-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 2.5;
+
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        const geometry = new THREE.IcosahedronGeometry(1, 64);
+
+        const material = new THREE.ShaderMaterial({
+            vertexShader: `
+                uniform float u_time;
+                uniform float u_scroll;
+                uniform vec2 u_mouse;
+                varying vec3 v_position;
+                // Simplex 3D noise
+                vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+                vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+                vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
+                vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+                float snoise(vec3 v) {
+                    const vec2 C = vec2(1.0/6.0, 1.0/3.0);
+                    const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+                    vec3 i = floor(v + dot(v, C.yyy));
+                    vec3 x0 = v - i + dot(i, C.xxx);
+                    vec3 g = step(x0.yzx, x0.xyz);
+                    vec3 l = 1.0 - g;
+                    vec3 i1 = min(g.xyz, l.zxy);
+                    vec3 i2 = max(g.xyz, l.zxy);
+                    vec3 x1 = x0 - i1 + C.xxx;
+                    vec3 x2 = x0 - i2 + C.yyy;
+                    vec3 x3 = x0 - D.yyy;
+                    i = mod289(i);
+                    vec4 p = permute(permute(permute(
+                                i.z + vec4(0.0, i1.z, i2.z, 1.0))
+                            + i.y + vec4(0.0, i1.y, i2.y, 1.0))
+                            + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+                    float n_ = 0.142857142857;
+                    vec3 ns = n_ * D.wyz - D.xzx;
+                    vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+                    vec4 x_ = floor(j * ns.z);
+                    vec4 y_ = floor(j - 7.0 * x_);
+                    vec4 x = x_ * ns.x + ns.yyyy;
+                    vec4 y = y_ * ns.x + ns.yyyy;
+                    vec4 h = 1.0 - abs(x) - abs(y);
+                    vec4 b0 = vec4(x.xy, y.xy);
+                    vec4 b1 = vec4(x.zw, y.zw);
+                    vec4 s0 = floor(b0) * 2.0 + 1.0;
+                    vec4 s1 = floor(b1) * 2.0 + 1.0;
+                    vec4 sh = -step(h, vec4(0.0));
+                    vec4 a0 = b0.xzyw + s0.xzyw * sh.xxyy;
+                    vec4 a1 = b1.xzyw + s1.xzyw * sh.zzww;
+                    vec3 p0 = vec3(a0.xy, h.x);
+                    vec3 p1 = vec3(a0.zw, h.y);
+                    vec3 p2 = vec3(a1.xy, h.z);
+                    vec3 p3 = vec3(a1.zw, h.w);
+                    vec4 norm = taylorInvSqrt(vec4(dot(p0, p0), dot(p1, p1), dot(p2, p2), dot(p3, p3)));
+                    p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+                    vec4 m = max(0.6 - vec4(dot(x0, x0), dot(x1, x1), dot(x2, x2), dot(x3, x3)), 0.0);
+                    m = m * m;
+                    return 42.0 * dot(m * m, vec4(dot(p0, x0), dot(p1, x1), dot(p2, x2), dot(p3, x3)));
+                }
+                void main() {
+                    v_position = position;
+                    float distortion = snoise(v_position * 2.0 + u_time * 0.5) * 0.3;
+                    float mouse_dist = distance(vec2(position.x, position.y), u_mouse);
+                    distortion -= smoothstep(0.0, 0.8, mouse_dist) * 0.2;
+                    vec3 displaced_position = position + normal * distortion;
+                    float scale = 1.0 + u_scroll * 4.0;
+                    vec4 modelViewPosition = modelViewMatrix * vec4(displaced_position * scale, 1.0);
+                    gl_Position = projectionMatrix * modelViewPosition;
+                }
+            `,
+            fragmentShader: `
+                uniform float u_opacity;
+                void main() {
+                    gl_FragColor = vec4(vec3(0.67, 0.54, 0.98), 0.5 * u_opacity);
+                }
+            `,
+            uniforms: {
+                u_time: { value: 0.0 },
+                u_scroll: { value: 0.0 },
+                u_mouse: { value: new THREE.Vector2(0, 0) },
+                u_opacity: { value: 1.0 }
+            },
+            wireframe: true,
+            transparent: true
+        });
+
+        const blob = new THREE.Mesh(geometry, material);
+        scene.add(blob);
+
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: '#about',
+                start: 'top bottom',
+                end: 'top top',
+                scrub: 1,
+            }
+        });
+
+        tl.to(material.uniforms.u_scroll, { value: 1 }, 0)
+            .to(material.uniforms.u_opacity, { value: 0, onComplete: () => {
+                    canvasContainer.style.display = 'none';
+                } }, 0);
+
+        ScrollTrigger.create({
+            trigger: '#hero',
+            start: 'bottom bottom',
+            onEnterBack: () => {
+                canvasContainer.style.display = 'block';
+            }
+        })
+
+        window.addEventListener('mousemove', (event) => {
+            const heroSection = document.getElementById('hero');
+            if (window.scrollY < heroSection.offsetHeight) {
+                canvasContainer.style.pointerEvents = 'auto';
+                material.uniforms.u_mouse.value.x = (event.clientX / window.innerWidth) * 2 - 1;
+                material.uniforms.u_mouse.value.y = - (event.clientY / window.innerHeight) * 2 + 1;
+            } else {
+                canvasContainer.style.pointerEvents = 'none';
+            }
+        });
+
+        const clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+            material.uniforms.u_time.value = clock.getElapsedTime();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- NEW: CONTACT FORM SUBMISSION LOGIC ---
+        const contactForm = document.getElementById('contact-form');
+        contactForm.addEventListener('submit', async function (event) {
+            // Prevent the default form submission which reloads the page
+            event.preventDefault();
+
+            const formData = new FormData(contactForm);
+            const data = Object.fromEntries(formData.entries());
+            const submitButton = contactForm.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.textContent;
+
+            submitButton.textContent = 'Sending...';
+            submitButton.disabled = true;
+
+            try {
+                // Send the data to your new serverless function
+                const response = await fetch('/api/send-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                if (response.ok) {
+                    alert('Message sent successfully!');
+                    contactForm.reset(); // Clear the form fields
+                } else {
+                    // Get error message from server if possible
+                    const errorResult = await response.json();
+                    alert(`Error: ${errorResult.message || 'Something went wrong. Please try again.'}`);
+                }
+            } catch (error) {
+                console.error('Form submission error:', error);
+                alert('An error occurred. Please check the console and try again later.');
+            } finally {
+                // Restore button state
+                submitButton.textContent = originalButtonText;
+                submitButton.disabled = false;
+            }
+        });
+    });
+</script>
+<!-- Join Us Modal -->
+<div id="join-us-modal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+    <div class="glass-card p-8 rounded-2xl w-full max-w-lg m-4 relative transform transition-all opacity-0 -translate-y-4">
+        <button id="close-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-white">&times;</button>
+        <h2 class="text-3xl font-bold text-center mb-6 dark:text-white">Join Algorythms</h2>
+        <form id="registration-form">
+            <div class="mb-4">
+                <label for="reg-name" class="block mb-2 dark:text-gray-300">Full Name</label>
+                <input type="text" id="reg-name" name="name" class="w-full p-3 rounded-lg bg-gray-200 dark:bg-gray-800" required>
+            </div>
+            <div class="mb-4">
+                <label for="reg-email" class="block mb-2 dark:text-gray-300">Email</label>
+                <input type="email" id="reg-email" name="email" class="w-full p-3 rounded-lg bg-gray-200 dark:bg-gray-800" required>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="reg-student-id" class="block mb-2 dark:text-gray-300">Student ID</label>
+                    <input type="text" id="reg-student-id" name="studentId" class="w-full p-3 rounded-lg bg-gray-200 dark:bg-gray-800" required>
+                </div>
+                <div>
+                    <label for="reg-year" class="block mb-2 dark:text-gray-300">Year of Study</label>
+                    <input type="number" id="reg-year" name="yearOfStudy" min="1" max="4" class="w-full p-3 rounded-lg bg-gray-200 dark:bg-gray-800" required>
+                </div>
+            </div>
+            <div class="mb-6">
+                <label for="reg-reason" class="block mb-2 dark:text-gray-300">Why do you want to join?</label>
+                <textarea id="reg-reason" name="reasonToJoin" rows="4" class="w-full p-3 rounded-lg bg-gray-200 dark:bg-gray-800" required></textarea>
+            </div>
+            <button type="submit" class="bg-violet-600 text-white px-6 py-3 rounded-full font-semibold w-full">Submit Application</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
