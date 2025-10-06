@@ -202,6 +202,95 @@
             cursor: pointer;
         }
         /* === END: LIGHTBOX STYLES === */
+        // === START: ANNOUNCEMENT MODAL JAVASCRIPT ===
+
+// --- Configuration ---
+// IMPORTANT: Replace this with the URL of the image you want to display
+const modalImageUrl = 'https://raw.githubusercontent.com/mobil689/mobil689.github.io/main/logos/algorythmslogo.jpg';
+
+const announcementModal = document.getElementById('announcement-modal');
+const closeModalBtn = document.getElementById('close-modal');
+const imageGrid = document.getElementById('image-grid');
+const gridSize = 10; // 10x10 grid
+
+// --- Functions ---
+function createGrid() {
+    // Clear any existing grid tiles
+    imageGrid.innerHTML = '';
+    // Create 100 tiles (10x10)
+    for (let i = 0; i < gridSize * gridSize; i++) {
+        const tile = document.createElement('div');
+        tile.classList.add('grid-tile');
+        
+        // Calculate the background position for each tile to form the full image
+        const col = i % gridSize;
+        const row = Math.floor(i / gridSize);
+        const bgPosX = col * (100 / (gridSize - 1));
+        const bgPosY = row * (100 / (gridSize - 1));
+
+        tile.style.backgroundImage = `url(${modalImageUrl})`;
+        tile.style.backgroundPosition = `${bgPosX}% ${bgPosY}%`;
+
+        imageGrid.appendChild(tile);
+    }
+}
+
+function showModal() {
+    announcementModal.classList.add('active');
+    lenis.stop(); // Stop smooth scrolling when modal is open
+
+    // Animate the grid tiles into view
+    const tiles = imageGrid.children;
+    gsap.from(tiles, {
+        duration: 0.8,
+        scale: 0.5,
+        opacity: 0,
+        rotation: () => Math.random() * 180 - 90,
+        stagger: {
+            each: 0.01,
+            from: 'random' // Animate tiles in a random order
+        },
+        ease: 'power2.out'
+    });
+}
+
+function closeModal() {
+    announcementModal.classList.remove('active');
+    lenis.start(); // Resume smooth scrolling
+}
+
+// --- Event Listeners and Initialization ---
+createGrid(); // Create the grid as soon as the script runs
+
+// We'll show the modal after the main preloader has finished
+// to ensure a smooth experience. Find the preloader animation:
+// Original line: gsap.to(preloader, {..., onComplete: () => preloader.style.display = 'none' });
+// We'll modify that onComplete callback.
+
+// Let's find and modify the preloader animation completion logic.
+// This requires a bit of a workaround since the script is already defined.
+// We will use a small delay after the DOM is loaded.
+// A better way would be to edit the original preloader line, but this is less intrusive.
+setTimeout(() => {
+    // Check if the preloader is hidden before showing the modal
+    if (document.getElementById('preloader').style.opacity === '0') {
+         showModal();
+    } else {
+        // Fallback: if preloader is still visible, wait a bit longer.
+        setTimeout(showModal, 2500); // Wait for the preloader animation to finish
+    }
+}, 500);
+
+
+closeModalBtn.addEventListener('click', closeModal);
+announcementModal.addEventListener('click', (e) => {
+    // Close modal if the background overlay is clicked
+    if (e.target === announcementModal) {
+        closeModal();
+    }
+});
+// === END: ANNOUNCEMENT MODAL JAVASCRIPT ===
+
     </style>
 </head>
 <body class="dark:animated-gradient">
@@ -1011,6 +1100,95 @@
             }
         });
     });
+    // === START: ANNOUNCEMENT MODAL JAVASCRIPT ===
+
+// --- Configuration ---
+// IMPORTANT: Replace this with the URL of the image you want to display
+const modalImageUrl = 'https://raw.githubusercontent.com/mobil689/mobil689.github.io/main/logos/algorythmslogo.jpg';
+
+const announcementModal = document.getElementById('announcement-modal');
+const closeModalBtn = document.getElementById('close-modal');
+const imageGrid = document.getElementById('image-grid');
+const gridSize = 10; // 10x10 grid
+
+// --- Functions ---
+function createGrid() {
+    // Clear any existing grid tiles
+    imageGrid.innerHTML = '';
+    // Create 100 tiles (10x10)
+    for (let i = 0; i < gridSize * gridSize; i++) {
+        const tile = document.createElement('div');
+        tile.classList.add('grid-tile');
+        
+        // Calculate the background position for each tile to form the full image
+        const col = i % gridSize;
+        const row = Math.floor(i / gridSize);
+        const bgPosX = col * (100 / (gridSize - 1));
+        const bgPosY = row * (100 / (gridSize - 1));
+
+        tile.style.backgroundImage = `url(${modalImageUrl})`;
+        tile.style.backgroundPosition = `${bgPosX}% ${bgPosY}%`;
+
+        imageGrid.appendChild(tile);
+    }
+}
+
+function showModal() {
+    announcementModal.classList.add('active');
+    lenis.stop(); // Stop smooth scrolling when modal is open
+
+    // Animate the grid tiles into view
+    const tiles = imageGrid.children;
+    gsap.from(tiles, {
+        duration: 0.8,
+        scale: 0.5,
+        opacity: 0,
+        rotation: () => Math.random() * 180 - 90,
+        stagger: {
+            each: 0.01,
+            from: 'random' // Animate tiles in a random order
+        },
+        ease: 'power2.out'
+    });
+}
+
+function closeModal() {
+    announcementModal.classList.remove('active');
+    lenis.start(); // Resume smooth scrolling
+}
+
+// --- Event Listeners and Initialization ---
+createGrid(); // Create the grid as soon as the script runs
+
+// We'll show the modal after the main preloader has finished
+// to ensure a smooth experience. Find the preloader animation:
+// Original line: gsap.to(preloader, {..., onComplete: () => preloader.style.display = 'none' });
+// We'll modify that onComplete callback.
+
+// Let's find and modify the preloader animation completion logic.
+// This requires a bit of a workaround since the script is already defined.
+// We will use a small delay after the DOM is loaded.
+// A better way would be to edit the original preloader line, but this is less intrusive.
+setTimeout(() => {
+    // Check if the preloader is hidden before showing the modal
+    if (document.getElementById('preloader').style.opacity === '0') {
+         showModal();
+    } else {
+        // Fallback: if preloader is still visible, wait a bit longer.
+        setTimeout(showModal, 2500); // Wait for the preloader animation to finish
+    }
+}, 500);
+
+
+closeModalBtn.addEventListener('click', closeModal);
+announcementModal.addEventListener('click', (e) => {
+    // Close modal if the background overlay is clicked
+    if (e.target === announcementModal) {
+        closeModal();
+    }
+});
+// === END: ANNOUNCEMENT MODAL JAVASCRIPT ===
+
 </script>
 <!-- Join Us Modal -->
 <div id="join-us-modal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm z-50 flex items-center justify-center hidden">
@@ -1054,8 +1232,20 @@
         <div id="lightbox-caption" class="text-center text-white mt-2 bg-black bg-opacity-50 p-2 rounded-md"></div>
     </div>
 </div>
+ <!-- START: ANNOUNCEMENT MODAL -->
+<div id="announcement-modal">
+    <div class="modal-content">
+        <button id="close-modal">&times;</button>
+        <div id="image-grid" class="image-grid-container">
+            <!-- This will be filled with grid tiles by JavaScript -->
+        </div>
+    </div>
+</div>
+<!-- END: ANNOUNCEMENT MODAL -->
+   
 </body>
 </html>
+
 
 
 
