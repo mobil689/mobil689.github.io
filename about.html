@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About — Algorythms Society</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.0.45/dist/lenis.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="shared.css">
+    <script>tailwind.config = { darkMode: 'class' }</script>
+</head>
+<body class="dark:animated-gradient">
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+    <div id="tsparticles"></div>
+
+    <div id="header-root"></div>
+
+    <main class="content-layer">
+        <div class="page-hero">
+            <h1 class="dark:text-white">About Us</h1>
+            <p class="dark:text-gray-400">We are more than a society; we are a launchpad for ideas, a hub for collaboration, and a community that empowers students to turn passion into projects.</p>
+        </div>
+
+        <section class="subpage-section">
+            <div class="container mx-auto px-6">
+                <!-- Mission Cards -->
+                <div class="grid md:grid-cols-3 gap-8 mb-20">
+                    <div class="glass-card p-8 rounded-2xl text-center">
+                        <div class="text-4xl mb-4">🚀</div>
+                        <h3 class="text-xl font-bold dark:text-white mb-3">Our Mission</h3>
+                        <p class="dark:text-gray-400">To bridge the gap between classroom learning and real-world tech, empowering every student to build, innovate, and lead.</p>
+                    </div>
+                    <div class="glass-card p-8 rounded-2xl text-center">
+                        <div class="text-4xl mb-4">🎯</div>
+                        <h3 class="text-xl font-bold dark:text-white mb-3">Our Vision</h3>
+                        <p class="dark:text-gray-400">A vibrant ecosystem where creativity meets code, and every idea has the potential to become reality.</p>
+                    </div>
+                    <div class="glass-card p-8 rounded-2xl text-center">
+                        <div class="text-4xl mb-4">💡</div>
+                        <h3 class="text-xl font-bold dark:text-white mb-3">Our Values</h3>
+                        <p class="dark:text-gray-400">Collaboration over competition. Learning by doing. Innovation without boundaries. Community above all.</p>
+                    </div>
+                </div>
+
+                <!-- Journey Timeline -->
+                <h3 class="section-title text-3xl font-bold dark:text-white text-center mb-12">Our Journey</h3>
+                <div class="journey-timeline">
+                    <div class="journey-container left">
+                        <div class="journey-content glass-card">
+                            <h4 class="font-bold text-xl dark:text-white">Society Founded</h4>
+                            <p class="text-sm text-violet-500 dark:text-violet-400 mt-1">October 2024</p>
+                            <p class="mt-3 dark:text-gray-300">Algorythms born from a vision to create a dynamic tech and creative community.</p>
+                        </div>
+                    </div>
+                    <div class="journey-container right">
+                        <div class="journey-content glass-card">
+                            <h4 class="font-bold text-xl dark:text-white">First Event: Compile X</h4>
+                            <p class="text-sm text-violet-500 dark:text-violet-400 mt-1">April 2025</p>
+                            <p class="mt-3 dark:text-gray-300">Hosted our inaugural event, "Compile X", attracting over 100 enthusiastic participants.</p>
+                        </div>
+                    </div>
+                    <div class="journey-container left">
+                        <div class="journey-content glass-card">
+                            <h4 class="font-bold text-xl dark:text-white">Mentorship Program Launch</h4>
+                            <p class="text-sm text-violet-500 dark:text-violet-400 mt-1">August 2025</p>
+                            <p class="mt-3 dark:text-gray-300">Successfully paired senior members with juniors to foster skill development and collaboration.</p>
+                        </div>
+                    </div>
+                    <div class="journey-container right">
+                        <div class="journey-content glass-card">
+                            <h4 class="font-bold text-xl dark:text-white">More to come</h4>
+                            <p class="text-sm text-violet-500 dark:text-violet-400 mt-1">2026</p>
+                            <p class="mt-3 dark:text-gray-300">Looking forward and keep walking, hoping to have more fun in coming journey.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer-root"></div>
+
+    <script src="shared.js"></script>
+    <script src="components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initComponents();
+            initShared();
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Journey timeline animation
+            const journeyItems = gsap.utils.toArray(".journey-container");
+            journeyItems.forEach(item => {
+                gsap.from(item, {
+                    scrollTrigger: { trigger: item, start: "top 80%", toggleActions: "play none none none" },
+                    opacity: 0,
+                    x: item.classList.contains('left') ? -100 : 100,
+                    duration: 0.8,
+                    ease: "power3.out"
+                });
+            });
+
+            // Mission cards animation
+            gsap.from(".glass-card", {
+                scrollTrigger: { trigger: ".glass-card", start: "top 85%" },
+                y: 40, opacity: 0, duration: 0.8, stagger: 0.15, ease: "power3.out"
+            });
+        });
+    </script>
+</body>
+</html>

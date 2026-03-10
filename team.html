@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team — Algorythms Society</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.0.45/dist/lenis.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="shared.css">
+    <script>tailwind.config = { darkMode: 'class' }</script>
+</head>
+<body class="dark:animated-gradient">
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+    <div id="tsparticles"></div>
+
+    <div id="header-root"></div>
+
+    <main class="content-layer">
+        <div class="page-hero">
+            <h1 class="dark:text-white">Meet The Team</h1>
+            <p class="dark:text-gray-400 text-lg">The incredible people behind Algorythms.</p>
+        </div>
+
+        <section class="subpage-section">
+            <div class="container mx-auto px-6">
+                <div class="mb-20">
+                    <h3 class="section-title text-3xl font-bold dark:text-white text-center mb-12">Core Team</h3>
+                    <div id="core-team-grid" class="flex flex-wrap gap-8 justify-center">
+                        <p class="text-center dark:text-gray-400">Loading team...</p>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="section-title text-3xl font-bold dark:text-white text-center mb-12">Department Heads</h3>
+                    <div id="department-heads-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-16 gap-x-8">
+                        <p class="text-center col-span-full dark:text-gray-400">Loading department heads...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer-root"></div>
+
+    <script src="shared.js"></script>
+    <script src="components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            initComponents();
+            initShared();
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Render team
+            const coreTeamGrid = document.getElementById('core-team-grid');
+            const deptHeadsGrid = document.getElementById('department-heads-grid');
+            const query = `*[_type == "teamMember"] | order(order asc){name, role, linkedin, instagram, "imageUrl": image.asset->url, isDepartmentHead, department, isCoreTeam, pokemonImg, order}`;
+            const members = await fetchSanityData(query);
+
+            if (members.length === 0) {
+                coreTeamGrid.innerHTML = '<p class="text-center dark:text-gray-400">No team members found. Add some in your Sanity Studio!</p>';
+                deptHeadsGrid.innerHTML = '';
+                return;
+            }
+
+            const coreTeam = members.filter(m => m.isCoreTeam);
+            const departmentHeads = members.filter(m => m.isDepartmentHead);
+
+            coreTeamGrid.innerHTML = coreTeam.map(member => createDynamicFlipCard(member)).join('');
+
+            const departments = {};
+            departmentHeads.forEach(head => {
+                if (!departments[head.department]) departments[head.department] = [];
+                departments[head.department].push(head);
+            });
+
+            deptHeadsGrid.innerHTML = Object.keys(departments).map(deptName => {
+                const heads = departments[deptName];
+                return `<div class="text-center">
+                    <h4 class="text-2xl font-semibold text-violet-500 dark:text-violet-300 mb-6">${deptName}</h4>
+                    <div class="flex justify-center flex-wrap gap-6">
+                        ${heads.map(head => createDynamicFlipCard(head)).join('')}
+                    </div>
+                </div>`;
+            }).join('');
+
+            // Animate cards in
+            gsap.from(".flip-card", {
+                scrollTrigger: { trigger: ".flip-card", start: "top 70%" },
+                scale: 0.5, opacity: 0, duration: 0.8, ease: "back.out(1.5)", stagger: 0.05
+            });
+        });
+    </script>
+</body>
+</html>
