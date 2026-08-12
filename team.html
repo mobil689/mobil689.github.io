@@ -56,27 +56,40 @@
     <script src="shared.js"></script>
     <script src="components.js"></script>
     <script>
+        function isExecutiveRole(role) {
+            if (!role) return false;
+            const r = role.toLowerCase();
+            if (r.includes('creative') || r.includes('content') || r.includes('event') || r.includes('sponsorship') || r.includes('social') || r.includes('technical') || r.includes('photography') || r.includes('media')) {
+                return false;
+            }
+            return r.includes('president') || r.includes('vice') || r.includes('secretary') || r.includes('treasur') || r.includes('advisor') || r.includes('founder');
+        }
+
         document.addEventListener('DOMContentLoaded', async function() {
             initComponents();
             initShared();
             gsap.registerPlugin(ScrollTrigger);
 
-            // Render team
             const executiveGrid = document.getElementById('executive-team-grid');
             const coreGrid = document.getElementById('core-team-grid');
-            const query = `*[_type == "teamMember"] | order(order asc){name, role, linkedin, instagram, "imageUrl": image.asset->url, isDepartmentHead, department, isCoreTeam, pokemonImg, order}`;
-            const members = await fetchSanityData(query);
 
-            if (members.length === 0) {
+            let members = [];
+            try {
+                const query = `*[_type == "teamMember"] | order(order asc){name, role, linkedin, instagram, "imageUrl": image.asset->url, isDepartmentHead, department, isCoreTeam, pokemonImg, order}`;
+                members = await fetchSanityData(query);
+            } catch(e) {
+                console.log("Sanity fetch failed or empty:", e);
+            }
+
+            if (!members || members.length === 0) {
                 executiveGrid.innerHTML = '<p class="text-center dark:text-gray-400">No team members found. Add some in your Sanity Studio!</p>';
                 coreGrid.innerHTML = '';
                 return;
             }
 
-            // isCoreTeam flag = Executive Team members
-            const executiveTeam = members.filter(m => m.isCoreTeam);
-            // isDepartmentHead flag = Core Team members
-            const coreTeam = members.filter(m => m.isDepartmentHead);
+            // Split into Executive Team vs Core Team based on role
+            const executiveTeam = members.filter(m => isExecutiveRole(m.role));
+            const coreTeam = members.filter(m => !isExecutiveRole(m.role));
 
             executiveGrid.innerHTML = executiveTeam.map(member => createDynamicFlipCard(member)).join('');
             coreGrid.innerHTML = coreTeam.map(member => createDynamicFlipCard(member)).join('');
