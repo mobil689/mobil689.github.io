@@ -31,16 +31,20 @@
 
         <section class="subpage-section">
             <div class="container mx-auto px-6">
+                <!-- Executive Team -->
                 <div class="mb-20">
-                    <h3 class="section-title text-3xl font-bold dark:text-white text-center mb-12">Core Team</h3>
-                    <div id="core-team-grid" class="flex flex-wrap gap-8 justify-center">
-                        <p class="text-center dark:text-gray-400">Loading team...</p>
+                    <h3 class="section-title text-3xl font-bold dark:text-white text-center mb-4">Executive Team</h3>
+                    <p class="text-center dark:text-gray-400 mb-12 text-lg">The leadership steering Algorythms' vision.</p>
+                    <div id="executive-team-grid" class="flex flex-wrap gap-8 justify-center">
+                        <p class="text-center dark:text-gray-400">Loading executive team...</p>
                     </div>
                 </div>
+                <!-- Core Team -->
                 <div>
-                    <h3 class="section-title text-3xl font-bold dark:text-white text-center mb-12">Department Heads</h3>
-                    <div id="department-heads-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-16 gap-x-8">
-                        <p class="text-center col-span-full dark:text-gray-400">Loading department heads...</p>
+                    <h3 class="section-title text-3xl font-bold dark:text-white text-center mb-4">Core Team</h3>
+                    <p class="text-center dark:text-gray-400 mb-12 text-lg">The powerhouse behind every event and initiative.</p>
+                    <div id="core-team-grid" class="flex flex-wrap gap-8 justify-center">
+                        <p class="text-center dark:text-gray-400">Loading core team...</p>
                     </div>
                 </div>
             </div>
@@ -58,37 +62,24 @@
             gsap.registerPlugin(ScrollTrigger);
 
             // Render team
-            const coreTeamGrid = document.getElementById('core-team-grid');
-            const deptHeadsGrid = document.getElementById('department-heads-grid');
+            const executiveGrid = document.getElementById('executive-team-grid');
+            const coreGrid = document.getElementById('core-team-grid');
             const query = `*[_type == "teamMember"] | order(order asc){name, role, linkedin, instagram, "imageUrl": image.asset->url, isDepartmentHead, department, isCoreTeam, pokemonImg, order}`;
             const members = await fetchSanityData(query);
 
             if (members.length === 0) {
-                coreTeamGrid.innerHTML = '<p class="text-center dark:text-gray-400">No team members found. Add some in your Sanity Studio!</p>';
-                deptHeadsGrid.innerHTML = '';
+                executiveGrid.innerHTML = '<p class="text-center dark:text-gray-400">No team members found. Add some in your Sanity Studio!</p>';
+                coreGrid.innerHTML = '';
                 return;
             }
 
-            const coreTeam = members.filter(m => m.isCoreTeam);
-            const departmentHeads = members.filter(m => m.isDepartmentHead);
+            // isCoreTeam flag = Executive Team members
+            const executiveTeam = members.filter(m => m.isCoreTeam);
+            // isDepartmentHead flag = Core Team members
+            const coreTeam = members.filter(m => m.isDepartmentHead);
 
-            coreTeamGrid.innerHTML = coreTeam.map(member => createDynamicFlipCard(member)).join('');
-
-            const departments = {};
-            departmentHeads.forEach(head => {
-                if (!departments[head.department]) departments[head.department] = [];
-                departments[head.department].push(head);
-            });
-
-            deptHeadsGrid.innerHTML = Object.keys(departments).map(deptName => {
-                const heads = departments[deptName];
-                return `<div class="text-center">
-                    <h4 class="text-2xl font-semibold text-violet-500 dark:text-violet-300 mb-6">${deptName}</h4>
-                    <div class="flex justify-center flex-wrap gap-6">
-                        ${heads.map(head => createDynamicFlipCard(head)).join('')}
-                    </div>
-                </div>`;
-            }).join('');
+            executiveGrid.innerHTML = executiveTeam.map(member => createDynamicFlipCard(member)).join('');
+            coreGrid.innerHTML = coreTeam.map(member => createDynamicFlipCard(member)).join('');
 
             // Animate cards in
             gsap.from(".flip-card", {
