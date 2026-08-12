@@ -122,147 +122,14 @@
 
     <div id="footer-root"></div>
 
-    <!-- Confetti canvas -->
-    <canvas id="confetti-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:10001;pointer-events:none;display:none;"></canvas>
-
-    <!-- ANNOUNCEMENT MODAL -->
-    <div id="announcement-modal">
-        <div class="modal-content">
-            <button id="close-modal">&times;</button>
-            <div id="image-grid" class="image-grid-container"></div>
-        </div>
-    </div>
-
     <script src="shared.js"></script>
     <script src="components.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             initComponents();
 
-            // --- ANNOUNCEMENT MODAL ---
-            const announcementModal = document.getElementById('announcement-modal');
-            const closeModalBtn = document.getElementById('close-modal');
-            const imageGrid = document.getElementById('image-grid');
-            const confettiCanvas = document.getElementById('confetti-canvas');
-            const confettiCtx = confettiCanvas ? confettiCanvas.getContext('2d') : null;
-            const modalImageUrl = 'compilex2.O.jpeg';
-            const gridSize = 10;
-            let confettiPieces = [];
-            let confettiAnimId = null;
-
-            function resizeConfettiCanvas() {
-                if (!confettiCanvas) return;
-                confettiCanvas.width = window.innerWidth;
-                confettiCanvas.height = window.innerHeight;
-            }
-            window.addEventListener('resize', resizeConfettiCanvas);
-
-            function createConfettiPiece() {
-                const colors = ['#a855f7','#6366f1','#ec4899','#f59e0b','#10b981','#3b82f6','#f43f5e','#8b5cf6','#14b8a6','#fbbf24'];
-                return {
-                    x: Math.random() * window.innerWidth,
-                    y: -20 - Math.random() * window.innerHeight * 0.3,
-                    w: 6 + Math.random() * 8,
-                    h: 4 + Math.random() * 6,
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    vx: (Math.random() - 0.5) * 4,
-                    vy: 1.5 + Math.random() * 3,
-                    rot: Math.random() * 360,
-                    rotSpeed: (Math.random() - 0.5) * 12,
-                    opacity: 1,
-                    shape: Math.random() > 0.5 ? 'rect' : 'circle'
-                };
-            }
-
-            function startConfetti() {
-                if (!confettiCanvas || !confettiCtx) return;
-                resizeConfettiCanvas();
-                confettiPieces = [];
-                for (let i = 0; i < 200; i++) confettiPieces.push(createConfettiPiece());
-                let addTimer = 0;
-                function animate() {
-                    confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-                    addTimer++;
-                    if (addTimer % 3 === 0 && confettiPieces.length < 400) {
-                        confettiPieces.push(createConfettiPiece());
-                    }
-                    confettiPieces = confettiPieces.filter(p => p.opacity > 0.01);
-                    confettiPieces.forEach(p => {
-                        p.x += p.vx;
-                        p.y += p.vy;
-                        p.vy += 0.04;
-                        p.rot += p.rotSpeed;
-                        p.vx *= 0.99;
-                        if (p.y > confettiCanvas.height * 0.7) p.opacity -= 0.015;
-                        confettiCtx.save();
-                        confettiCtx.translate(p.x, p.y);
-                        confettiCtx.rotate(p.rot * Math.PI / 180);
-                        confettiCtx.globalAlpha = p.opacity;
-                        confettiCtx.fillStyle = p.color;
-                        if (p.shape === 'rect') {
-                            confettiCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-                        } else {
-                            confettiCtx.beginPath();
-                            confettiCtx.arc(0, 0, p.w / 2, 0, Math.PI * 2);
-                            confettiCtx.fill();
-                        }
-                        confettiCtx.restore();
-                    });
-                    confettiAnimId = requestAnimationFrame(animate);
-                }
-                confettiAnimId = requestAnimationFrame(animate);
-            }
-
-            function stopConfetti() {
-                if (confettiAnimId) { cancelAnimationFrame(confettiAnimId); confettiAnimId = null; }
-                if (confettiCtx && confettiCanvas) confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-                confettiPieces = [];
-            }
-
-            function createGrid() {
-                if (!imageGrid) return;
-                imageGrid.innerHTML = '';
-                for (let i = 0; i < gridSize * gridSize; i++) {
-                    const tile = document.createElement('div');
-                    tile.classList.add('grid-tile');
-                    const col = i % gridSize;
-                    const row = Math.floor(i / gridSize);
-                    tile.style.backgroundImage = `url(${modalImageUrl})`;
-                    tile.style.backgroundPosition = `${col * (100 / (gridSize - 1))}% ${row * (100 / (gridSize - 1))}%`;
-                    imageGrid.appendChild(tile);
-                }
-            }
-
-            function showModal() {
-                if (!announcementModal) return;
-                announcementModal.classList.add('active');
-                if (lenis) lenis.stop();
-                if (confettiCanvas) confettiCanvas.style.display = 'block';
-                startConfetti();
-                gsap.from(imageGrid.children, {
-                    duration: 0.8, scale: 0.5, opacity: 0,
-                    rotation: () => Math.random() * 180 - 90,
-                    stagger: { each: 0.01, from: 'random' },
-                    ease: 'power2.out'
-                });
-            }
-
-            function hideModal() {
-                if (!announcementModal) return;
-                announcementModal.classList.remove('active');
-                if (lenis) lenis.start();
-                stopConfetti();
-                if (confettiCanvas) confettiCanvas.style.display = 'none';
-            }
-
-            createGrid();
-            if (closeModalBtn) closeModalBtn.addEventListener('click', hideModal);
-            if (announcementModal) announcementModal.addEventListener('click', (e) => {
-                if (e.target === announcementModal) hideModal();
-            });
-
             // --- PRELOADER ---
-            initPreloader(() => { showModal(); });
+            initPreloader();
 
             // --- SHARED INIT (after preloader) ---
             initShared();
